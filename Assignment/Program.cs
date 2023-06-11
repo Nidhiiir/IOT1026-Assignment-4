@@ -1,7 +1,101 @@
-using Assignment.InterfaceCommand;
+using System;
 
-namespace Assignment
+namespace Assignment.InterfaceCommand
 {
+    public interface IRobotCommand
+    {
+        void Run(Robot robot);
+    }
+
+    public class Robot
+    {
+        private IRobotCommand[] commands = new IRobotCommand[6];
+        private int currentIndex = 0;
+
+        public void LoadCommand(IRobotCommand command)
+        {
+            if (currentIndex < 6)
+            {
+                commands[currentIndex] = command;
+                currentIndex++;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Command limit exceeded. Cannot add more commands.");
+                Console.ResetColor();
+            }
+        }
+
+        public void Run()
+        {
+            foreach (IRobotCommand command in commands)
+            {
+                command?.Run(this);
+            }
+        }
+    }
+
+    public class OffCommand : IRobotCommand
+    {
+        public void Run(Robot robot)
+        {
+            robot.IsPowered = false;
+        }
+    }
+
+    public class OnCommand : IRobotCommand
+    {
+        public void Run(Robot robot)
+        {
+            robot.IsPowered = true;
+        }
+    }
+
+    public class WestCommand : IRobotCommand
+    {
+        public void Run(Robot robot)
+        {
+            if (robot.IsPowered)
+            {
+                robot.X--;
+            }
+        }
+    }
+
+    public class EastCommand : IRobotCommand
+    {
+        public void Run(Robot robot)
+        {
+            if (robot.IsPowered)
+            {
+                robot.X++;
+            }
+        }
+    }
+
+    public class SouthCommand : IRobotCommand
+    {
+        public void Run(Robot robot)
+        {
+            if (robot.IsPowered)
+            {
+                robot.Y--;
+            }
+        }
+    }
+
+    public class NorthCommand : IRobotCommand
+    {
+        public void Run(Robot robot)
+        {
+            if (robot.IsPowered)
+            {
+                robot.Y++;
+            }
+        }
+    }
+
     public static class Program
     {
         enum Commands
@@ -13,6 +107,7 @@ namespace Assignment
             east,
             west
         }
+
         public static bool AssignCommand(Robot robot, string? command)
         {
             if (Enum.TryParse<Commands>(command, out Commands thisCommand))
@@ -48,10 +143,10 @@ namespace Assignment
                 return false;
             }
         }
+
         static void Main()
         {
-            // Run your RobotTester class here -> RobotTester.TestRobot()
-            Robot newRobot = new();
+            Robot newRobot = new Robot();
             Console.WriteLine("Give 6 commands to the robot. Possible commands are:");
             Commands[] allCommands = (Commands[])Enum.GetValues(typeof(Commands));
 
@@ -59,6 +154,7 @@ namespace Assignment
             {
                 Console.WriteLine(command);
             }
+
             for (int input = 0; input < 6; input++)
             {
                 Console.Write($"Assign command #{input + 1}: ");
@@ -68,6 +164,7 @@ namespace Assignment
                     input--;
                 }
             }
+
             newRobot.Run();
         }
     }
