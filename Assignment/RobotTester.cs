@@ -2,69 +2,49 @@ using Assignment.InterfaceCommand;
 
 namespace Assignment;
 
-public class Robot
+static class RobotTester
 {
-    public int NumCommands { get; }
-    public int X { get; set; }
-    public int Y { get; set; }
-    public bool IsPowered { get; set; }
-
-    private const int DefaultCommands = 6;
-    //with new type of collect we can control the number of commands in a better way
-    private readonly Queue<RobotCommand> _commands;
-    private int _commandsLoaded = 0;
-
-    /// <summary>
-    /// Returns a string representation of the robot's current state.
-    /// </summary>
-    /// <returns>A string representation of the robot's current state.</returns>
-    public override string ToString()
+    public static void TestRobot()
     {
-        return $"[{X} {Y} {IsPowered}]";
-    }
-
-    public Robot() : this(DefaultCommands) { }
-
-    /// <summary>
-    /// Constructor that initializes the robot with the capacity to store a user specified
-    /// number of commands
-    /// </summary>
-    /// <param name="numCommands">The maximum number of commands the robot can store</param>
-    public Robot(int numCommands)
-    {
-        _commands = new Queue<RobotCommand>(numCommands);
-        NumCommands = numCommands;
-    }
-
-    /// <summary>
-    /// Executes the loaded commands in the robot's queue.
-    /// </summary>
-    /// <returns><c>true</c> if the commands were executed successfully; otherwise, <c>false</c>.</returns>
-    public bool Run()
-    {
-        if (_commands.Count == 0)
-            return false;
-
-        while (_commands.Count > 0)
+        int totalCommands = 1;
+        Robot robot = new Robot();
+        Console.WriteLine("Give 6 commands to the robot. Possible commands are:");
+        Console.WriteLine("ON");
+        Console.WriteLine("OFF");
+        Console.WriteLine("NORTH");
+        Console.WriteLine("SOUTH");
+        Console.WriteLine("EAST");
+        Console.WriteLine("WEST");
+        Console.WriteLine("REBOOT\n");
+        do
         {
-            var command = _commands.Dequeue();
-            command.Run(this);
-            Console.WriteLine(this);
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Loads a command into the robot's queue.
-    /// </summary>
-    /// <param name="command">The command to be loaded.</param>
-    /// <returns><c>true</c> if the command was loaded successfully; otherwise, <c>false</c>.</returns>
-    public bool LoadCommand(RobotCommand command)
-    {
-        if (_commandsLoaded >= NumCommands)
-            return false;
-        _commands.Enqueue(command);
-        _commandsLoaded++;
-        return true;
+            Console.Write($"Assign command #{totalCommands}: ");
+            string? choice = Console.ReadLine()?.ToUpper();
+            RobotCommand? command = choice switch
+            {
+                "ON" => new OnCommand(),
+                "OFF" => new OffCommand(),
+                "NORTH" => new NorthCommand(),
+                "SOUTH" => new SouthCommand(),
+                "EAST" => new EastCommand(),
+                "WEST" => new WestCommand(),
+                "REBOOT" => new RebootCommand(),
+                _ => null
+            };
+            if (command != null)
+            {
+                robot.LoadCommand(command);
+                totalCommands++;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Invalid Command - try again");
+                Console.ResetColor();
+            }
+        } while (totalCommands <= 6);
+        Console.WriteLine();
+        robot.Run();
+        Console.ReadLine();
     }
 }
