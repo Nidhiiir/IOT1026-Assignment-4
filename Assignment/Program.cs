@@ -4,7 +4,10 @@
     {
         static void Main()
         {
-            RobotTester.TestRobot();
+            RobotTester tester = new RobotTester();
+            tester.TestRobot();
+
+            Console.ReadLine();
         }
     }
 }
