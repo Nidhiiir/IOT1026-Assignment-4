@@ -1,50 +1,84 @@
+﻿using System;
+using System.Reflection;
+using System.Xml.Linq;
 using Assignment.InterfaceCommand;
 
-namespace Assignment;
-
-static class RobotTester
+namespace Assignment
 {
-    public static void TestRobot()
+    public class RobotTester
     {
-        int totalCommands = 1;
-        Robot robot = new Robot();
-        Console.WriteLine("Give 6 commands to the robot. Possible commands are:");
-        Console.WriteLine("ON");
-        Console.WriteLine("OFF");
-        Console.WriteLine("NORTH");
-        Console.WriteLine("SOUTH");
-        Console.WriteLine("EAST");
-        Console.WriteLine("WEST");
-        Console.WriteLine("REBOOT\n");
-        do
+        private Robot _robot;
+        private List<string> _supportCommands;
+        private int _totalCommandCount;
+        public RobotTester()
         {
-            Console.Write($"Assign command #{totalCommands}: ");
-            string? choice = Console.ReadLine()?.ToUpper();
-            RobotCommand? command = choice switch
+            _totalCommandCount = 6;
+            _supportCommands = new List<string>();
+            InitCommandNames();
+            _robot = new Robot(_totalCommandCount);
+        }
+
+        public void TestRobot()
+        {
+            Console.WriteLine($"Give {_totalCommandCount} commands to the robot. Possible commands are:");
+            foreach (string item in _supportCommands)
             {
-                "ON" => new OnCommand(),
-                "OFF" => new OffCommand(),
-                "NORTH" => new NorthCommand(),
-                "SOUTH" => new SouthCommand(),
-                "EAST" => new EastCommand(),
-                "WEST" => new WestCommand(),
-                "REBOOT" => new RebootCommand(),
-                _ => null
-            };
-            if (command != null)
-            {
-                robot.LoadCommand(command);
-                totalCommands++;
+                Console.WriteLine(item);
             }
-            else
+
+            Console.WriteLine("");
+            LoadCommandToRobot();
+            _robot.Run();
+        }
+
+        private void LoadCommandToRobot()
+        {
+            int selectedCommandCount = 0;
+            while (selectedCommandCount < _totalCommandCount)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid Command - try again");
-                Console.ResetColor();
+                string commandName = Console.ReadLine() ?? "";
+                if (!CheckCommand(commandName))
+                {
+                    Console.WriteLine("Invalid command, try again!");
+                    continue;
+                }
+
+                RobotCommand command = CreateCommandByName(commandName);
+                if (!_robot.LoadCommand(command))
+                {
+                    Console.WriteLine("Over the command limit.");
+                    break;
+                }
+                ++selectedCommandCount;
             }
-        } while (totalCommands <= 6);
-        Console.WriteLine();
-        robot.Run();
-        Console.ReadLine();
+        }
+
+        private bool CheckCommand(string commandName)
+        {
+            return _supportCommands.Contains(commandName);
+        }
+
+        private RobotCommand CreateCommandByName(string name)
+        {
+            string className = $"Assignment.InterfaceCommand.{name}Command";
+            Type classType = Type.GetType(className) ?? typeof(RobotCommand);
+            return (RobotCommand)Activator.CreateInstance(classType);
+        }
+
+        private void InitCommandNames()
+        {
+            string namespaceName = "Assignment.InterfaceCommand";
+            Type[] types = Assembly.GetExecutingAssembly().GetTypes();
+
+            foreach (Type type in types)
+            {
+                if (type.Namespace == namespaceName && type.IsClass)
+                {
+                    string commandName = type.Name.Replace("Command", string.Empty);
+                    _supportCommands.Add(commandName);
+                }
+            }
+        }
     }
 }
+
