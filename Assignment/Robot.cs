@@ -1,4 +1,5 @@
-﻿// Change to 'using Assignment.InterfaceCommand' when you are ready to test your interface implementation
+// Change to 'using Assignment.InterfaceCommand' when you are ready to test your interface implementation
+//using Assignment.AbstractCommand;
 using Assignment.InterfaceCommand;
 
 namespace Assignment;
@@ -7,18 +8,16 @@ public class Robot
 {
     // These are properties, you can replace these with traditional getters/setters if you prefer.
     public int NumCommands { get; }
-
-    // These properties are not good! The setter allows
-    // us to move the robot even if it off
     public int X { get; set; }
     public int Y { get; set; }
     public bool IsPowered { get; set; }
 
     private const int DefaultCommands = 6;
+
     // An array is not the preferred data structure here.
     // You will get bonus marks if you replace the array with the preferred data structure
     // Hint: It is NOT a list either,
-    private readonly Queue<RobotCommand> _commands; //I change the array to Queue
+    private readonly RobotCommand[] _commands;
     private int _commandsLoaded = 0;
 
     public override string ToString()
@@ -26,47 +25,53 @@ public class Robot
         return $"[{X} {Y} {IsPowered}]";
     }
 
-    // You should not have to use any of the methods below here but you should
-    // provide XML documentation for the argumented constructor, the Run method and one
-    // of the LoadCommand methods.
+    /// <summary>
+    /// Constructor named "Robot" with no parameters. It has an initializer that calls another constructor
+    /// </summary>
+    /// <constructor>
+    /// <modifier>public</modifier>
+    /// <name>Robot</name>
+    /// <parameters></parameters>
+    /// <initializer>this(DefaultCommands)</initializer>
+    /// <body>{ }</body>
+    /// </constructor>
     public Robot() : this(DefaultCommands) { }
 
     /// <summary>
-    /// Constructor that initializes the robot with the capacity to store a user specified
-    /// number of commands
+    /// Initializes a new instance of the <see cref="Robot"/> class with a specified number of commands.
     /// </summary>
-    /// <param name="numCommands">The maximum number of commands the robot can store</param>
+    /// <param name="numCommands">The number of commands for the robot.</param>
     public Robot(int numCommands)
     {
-        _commands = new Queue<RobotCommand>();
+        _commands = new RobotCommand[numCommands];
         NumCommands = numCommands;
     }
 
     /// <summary>
-    /// Runs the loaded commands on the robot.
+    /// Executes the loaded commands for the robot and prints the robot's state after each command execution.
     /// </summary>
     public void Run()
     {
-        while (_commands.Count > 0)
+        for (var i = 0; i < _commandsLoaded; ++i)
         {
-            RobotCommand command = _commands.Dequeue();
-            command.Run(this);
-            --_commandsLoaded;
+            _commands[i].Run(this);
             Console.WriteLine(this);
         }
     }
 
     /// <summary>
-    /// Load a command into robot's command list
+    /// Loads a command into the robot's command array.
     /// </summary>
-    /// <param name="command"></param>
-    /// <returns></returns>
+    /// <param name="command">The command to be loaded.</param>
+    /// <returns>
+    /// <c>true</c> if the command was successfully loaded;
+    /// otherwise, <c>false</c> if the command list is already full.
+    /// </returns>
     public bool LoadCommand(RobotCommand command)
     {
         if (_commandsLoaded >= NumCommands)
             return false;
-        _commands.Enqueue(command);
-        _commandsLoaded++;
+        _commands[_commandsLoaded++] = command;
         return true;
     }
 }
