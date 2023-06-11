@@ -1,7 +1,3 @@
-using Assignment;
-//using Assignment.AbstractCommand;
-using Assignment.InterfaceCommand;
-
 namespace AssignmentTest
 {
     [TestClass]
