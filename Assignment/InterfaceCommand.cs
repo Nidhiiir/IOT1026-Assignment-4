@@ -4,38 +4,67 @@ public interface RobotCommand
 {
     void Run(Robot robot); // Interfaces are public and abstract by default.
 }
-
-public class OffCommand : RobotCommand
+public class OffCommand : IRobotCommand
 {
-    public void Run(Robot robot) => robot.IsPowered = false;
+    public void Run(Robot robot)
+    {
+        robot.IsPowered = false;
+    }
 }
 
-public class OnCommand : RobotCommand
+public class OnCommand : IRobotCommand
 {
-    public void Run(Robot robot) => robot.IsPowered = true;
+    public void Run(Robot robot)
+    {
+        robot.IsPowered = true;
+    }
 }
 
-public class WestCommand : RobotCommand
+public class WestCommand : IRobotCommand
 {
-    public void Run(Robot robot) { if (robot.IsPowered) robot.X--; }
+    public void Run(Robot robot)
+    {
+        if (robot.IsPowered)
+        {
+            robot.X--;
+        }
+    }
 }
 
-public class EastCommand : RobotCommand
+public class EastCommand : IRobotCommand
 {
-    public void Run(Robot robot) { if (robot.IsPowered) robot.X++; }
+    public void Run(Robot robot)
+    {
+        if (robot.IsPowered)
+        {
+            robot.X++;
+        }
+    }
 }
 
-public class SouthCommand : RobotCommand
+public class SouthCommand : IRobotCommand
 {
-    public void Run(Robot robot) { if (robot.IsPowered) robot.Y--; }
+    public void Run(Robot robot)
+    {
+        if (robot.IsPowered)
+        {
+            robot.Y--;
+        }
+    }
 }
 
-public class NorthCommand : RobotCommand
+public class NorthCommand : IRobotCommand
 {
-    public void Run(Robot robot) { if (robot.IsPowered) robot.Y++; }
+    public void Run(Robot robot)
+    {
+        if (robot.IsPowered)
+        {
+            robot.Y++;
+        }
+    }
 }
 
-public class BachataCommand : RobotCommand
+public class BachataCommand : IRobotCommand
 {
     public void Run(Robot robot)
     {
@@ -56,3 +85,6 @@ public class BachataCommand : RobotCommand
         }
     }
 }
+
+
+        
