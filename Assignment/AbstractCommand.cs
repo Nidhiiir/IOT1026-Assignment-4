@@ -1,28 +1,28 @@
-namespace Assignment.AbstractCommand;
-
+namespace Assignment.AbstractCommand
+{
 public abstract class RobotCommand
 {
-    public abstract void Run(Robot robot);
+public abstract void Run(Robot robot);
 }
-public class OffCommand : IRobotCommand
+public class OffCommand : RobotCommand
 {
-    public override void Run()(Robot robot)
+    public override void Run(Robot robot)
     {
         robot.IsPowered = false;
     }
 }
 
-public class OnCommand : IRobotCommand
+public class OnCommand : RobotCommand
 {
-    public override void Run()(Robot robot)
+    public override void Run(Robot robot)
     {
         robot.IsPowered = true;
     }
 }
 
-public class WestCommand : IRobotCommand
+public class WestCommand : RobotCommand
 {
-    public override void Run()(Robot robot)
+    public override void Run(Robot robot)
     {
         if (robot.IsPowered)
         {
@@ -33,7 +33,7 @@ public class WestCommand : IRobotCommand
 
 public class EastCommand : RobotCommand
 {
-    public override void Run()(Robot robot)
+    public override void Run(Robot robot)
     {
         if (robot.IsPowered)
         {
@@ -42,9 +42,9 @@ public class EastCommand : RobotCommand
     }
 }
 
-public class SouthCommand : IRobotCommand
+public class SouthCommand : RobotCommand
 {
-    public override void Run()(Robot robot)
+    public override void Run(Robot robot)
     {
         if (robot.IsPowered)
         {
@@ -53,9 +53,9 @@ public class SouthCommand : IRobotCommand
     }
 }
 
-public class NorthCommand : IRobotCommand
+public class NorthCommand : RobotCommand
 {
-    public override void Run()(Robot robot)
+    public override void Run(Robot robot)
     {
         if (robot.IsPowered)
         {
@@ -64,3 +64,4 @@ public class NorthCommand : IRobotCommand
     }
 }
 
+    
